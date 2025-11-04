@@ -2,6 +2,7 @@
 
 
 #include "PlayerScript.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 APlayerScript::APlayerScript()
@@ -34,5 +35,11 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void APlayerScript::MoveToPoint()
 {
+}
+
+void APlayerScript::RayCast(UCameraComponent* cam)
+{
+	FHitResult* hit = new FHitResult();
+	FVector cameraFront = cam->GetForwardVector();
 }
 

@@ -30,4 +30,7 @@ public:
 	//Allows the player to move to a point clicked on the ground by a players mouse
 	void MoveToPoint();
 
+	UFUNCTION(BlueprintCallable, Category = "Raycasting")
+	void RayCast(UCameraComponent* cam);
+
 };
