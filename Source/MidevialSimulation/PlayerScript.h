@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "MyAIController.h"
 #include "PlayerScript.generated.h"
 
 UCLASS()
@@ -19,7 +20,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -28,9 +29,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerMovement")
 	//Allows the player to move to a point clicked on the ground by a players mouse
-	void MoveToPoint();
-
-	UFUNCTION(BlueprintCallable, Category = "Raycasting")
-	void RayCast(UCameraComponent* cam);
+	//We move to location using our click as destination, radius (How close you can get to an object) and allowincompletepaths
+	//We use UCameraComponent to help determine where we clicked on screen and translate into 3D
+	void ToPointOnClick(UCameraComponent* cam, float MaxClickDistance, float radius, bool allowIncompletePaths);
 
 };
