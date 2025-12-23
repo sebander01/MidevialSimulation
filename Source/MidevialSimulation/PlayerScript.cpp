@@ -3,8 +3,8 @@
 
 #include "PlayerScript.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "MyAIController.h"
-
 
 // Sets default values
 APlayerScript::APlayerScript()
@@ -18,7 +18,6 @@ APlayerScript::APlayerScript()
 void APlayerScript::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -45,7 +44,15 @@ void APlayerScript::ToPointOnClick(UCameraComponent* cam, float maxClickDistance
 	//Get the mouse position and store it in mouse
 	GEngine->GameViewport->GetMousePosition(mouse);
 	//Make a 3D vector that will be used as destination later
-	FVector destination(maxClickDistance, mouse.X, mouse.Y);
+	FVector destination(mouse.X, mouse.Y, maxClickDistance);
+	//This method translates the mouse position without this it's off by alot.
+	//The following are like foot notes based on what I learned while figuring this out:
+	//It requires us to add #include gameframework/PlayerController.h and somewhere we have to also get our first person controller GetWorld()->GetFirstPlayerController()->DeprojectMouse.. works great
+	//note for if we reuse this in other projects or just for later if we start needing to get player controller even twice we should throw GetWorld()->GetFirstPlayerController() into a PlayerController* variable
+	//but right now we have no need to store it.
+	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(destination, cameraFront);
+	//This method seems to translate destination so from this point on destination seems to be accurate and can just be used below with 0 issues because it's been modified.
+	DrawDebugLine(GetWorld(), cameraFront, destination, FColor::Red, false, 1.0f, 0, 0.5f);
 #pragma endregion
 
 #pragma region Ai Controller and Movement
