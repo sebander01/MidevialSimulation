@@ -17,6 +17,10 @@ APlayerScript::APlayerScript()
 // Called when the game starts or when spawned
 void APlayerScript::BeginPlay()
 {
+	//On begin we have to give the AI controller a controller
+	MyAiController = Cast<AMyAIController>(GetController());
+	//Then it has to possess the player object
+	MyAiController->Possess(this);
 	Super::BeginPlay();
 }
 
@@ -56,9 +60,6 @@ void APlayerScript::ToPointOnClick(UCameraComponent* cam, float maxClickDistance
 #pragma endregion
 
 #pragma region Ai Controller and Movement
-	//Retrieve our AI controller and store it as MyAiController we will use this below
-	AMyAIController* MyAiController = Cast<AMyAIController>(GetController());
-
 	//We move to location using the following a destination, radius and allowincompletepaths selected by the dev in blueprint
 	//We assume always that overlap, pathfinding and project destination in that order are true but in this game we do not want to allow strafing
 	//We also assume we want to use nav mesh filter 0 for default

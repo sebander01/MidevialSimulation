@@ -27,6 +27,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//Variable for ai controller
+	AMyAIController* MyAiController;
+
 	UFUNCTION(BlueprintCallable, Category = "PlayerMovement")
 	//Allows the player to move to a point clicked on the ground by a players mouse
 	//We move to location using our click as destination, radius (How close you can get to an object) and allowincompletepaths
