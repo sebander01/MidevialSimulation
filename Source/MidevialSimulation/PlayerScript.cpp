@@ -17,11 +17,8 @@ APlayerScript::APlayerScript()
 // Called when the game starts or when spawned
 void APlayerScript::BeginPlay()
 {
-	//On begin we have to give the AI controller a controller
-	MyAiController = Cast<AMyAIController>(GetController());
-	//Then it has to possess the player object
-	MyAiController->Possess(this);
 	Super::BeginPlay();
+	//On begin we have to give the AI controller a controller
 }
 
 // Called every frame
@@ -36,6 +33,16 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+/// <summary>
+/// We should delete this before release but this method allows us to use AddOnScreenDebugMessage in a way that isn't super annoying to use
+/// </summary>
+/// <param name="color"></param>
+/// <param name="text"></param>
+void PrintDebugMessage(FColor color, FString TEXT(text))
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, color, TEXT(text));
 }
 
 void APlayerScript::ToPointOnClick(UCameraComponent* cam, float maxClickDistance, float radius, bool allowIncompletePaths)
@@ -60,10 +67,25 @@ void APlayerScript::ToPointOnClick(UCameraComponent* cam, float maxClickDistance
 #pragma endregion
 
 #pragma region Ai Controller and Movement
-	//We move to location using the following a destination, radius and allowincompletepaths selected by the dev in blueprint
-	//We assume always that overlap, pathfinding and project destination in that order are true but in this game we do not want to allow strafing
-	//We also assume we want to use nav mesh filter 0 for default
-	MyAiController->MoveToLocation(destination, radius, true, true, true, false, 0, allowIncompletePaths);
+
+	//Get the AI controller
+	MyAiController = Cast<AMyAIController>(GetController());
+	if (MyAiController)
+	{
+		PrintDebugMessage(FColor::Green, "Not Null");
+		//Then it has to possess the player object
+		MyAiController->Possess(this);
+
+		//We move to location using the following a destination, radius and allowincompletepaths selected by the dev in blueprint
+		//We assume always that overlap, pathfinding and project destination in that order are true but in this game we do not want to allow strafing
+		//We also assume we want to use nav mesh filter 0 for default
+		MyAiController->MoveToLocation(destination, radius, true, true, true, false, 0, allowIncompletePaths);
+	}
+	else
+	{
+		PrintDebugMessage(FColor::Red, "Null");
+	}
+		
 #pragma endregion
 }
 
