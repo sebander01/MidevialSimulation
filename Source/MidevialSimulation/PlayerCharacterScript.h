@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
-#include "PlayerScript.generated.h"
+#include "GameFramework/Character.h"
+#include "PlayerCharacterScript.generated.h"
 
 UCLASS()
-class MIDEVIALSIMULATION_API APlayerScript : public APawn
+class MIDEVIALSIMULATION_API APlayerCharacterScript : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
-	APlayerScript();
+	// Sets default values for this character's properties
+	APlayerCharacterScript();
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,5 +29,4 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerMovement")
 	//Allows the player to move to a point clicked on the ground by a players mouse
 	void MoveToPoint();
-
 };
