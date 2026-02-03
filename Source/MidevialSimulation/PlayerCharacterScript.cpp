@@ -3,6 +3,8 @@
 
 #include "PlayerCharacterScript.h"
 #include "Camera/CameraComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacterScript::APlayerCharacterScript()
@@ -34,6 +36,16 @@ void APlayerCharacterScript::SetupPlayerInputComponent(UInputComponent* PlayerIn
 }
 
 /// <summary>
+/// We should delete this before release but this method allows us to use AddOnScreenDebugMessage in a way that isn't super annoying to use
+/// </summary>
+/// <param name="color"></param>
+/// <param name="text"></param>
+void PrintDebugMessage(FColor color, FString TEXT(text))
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, color, TEXT(text));
+}
+
+/// <summary>
 /// A method to move the player to a point using nav mesh
 /// </summary>
 /// <param name="cam"></param>
@@ -58,6 +70,13 @@ void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDi
 
 #pragma region AIMovement
 
+		//We need to use SimpleMoveToLocation in this example because we are not able to change controller from playercontroller to AIcontroller
+		//Even if we could we wouldn't want to SimpleMoveToLocation is built to use playercontroller and MoveToLocation that I tried to use before is built
+		//To use and AI controller exclusively.
+
+		//Important in the future for me to remember you can only have 1 active controller at a time. It's possible to effective delete a controller and make a new one at run time (I think)
+		//But we don't want to do that here because we have no extra code we are running where we need our own AI class for this I am just kind of making a foot note that is a much more complicated but possible option
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), destination);
 #pragma endregion
 
 }
