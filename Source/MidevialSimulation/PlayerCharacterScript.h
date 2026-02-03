@@ -28,5 +28,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerMovement")
 	//Allows the player to move to a point clicked on the ground by a players mouse
-	void MoveToPoint();
+	void MoveToPoint(UCameraComponent* cam, float maxClickDistance);
 };

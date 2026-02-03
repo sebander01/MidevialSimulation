@@ -2,6 +2,7 @@
 
 
 #include "PlayerCharacterScript.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 APlayerCharacterScript::APlayerCharacterScript()
@@ -32,7 +33,31 @@ void APlayerCharacterScript::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 }
 
-void APlayerCharacterScript::MoveToPoint()
+/// <summary>
+/// A method to move the player to a point using nav mesh
+/// </summary>
+/// <param name="cam"></param>
+/// <param name="maxClickDistance"></param>
+void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDistance)
 {
+#pragma region Camera to world location
+	//Collect the front of the camera
+	FVector cameraFront = cam->GetForwardVector();
+	//The value of the mouse position
+	FVector2D mouse;
+	//Get the mouse position and store it in mouse
+	GEngine->GameViewport->GetMousePosition(mouse);
+	//Make a 3D vector that will be used as destination later
+	FVector destination(mouse.X, mouse.Y, maxClickDistance);
+	//This method translates the mouse position without this it's off by alot.
+	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(destination, cameraFront);
+	//This method seems to translate destination so from this point on destination seems to be accurate and can just be used below with 0 issues because it's been modified.
+	//We debug the line so we can see it
+	DrawDebugLine(GetWorld(), cameraFront, destination, FColor::Red, false, 1.0f, 0, 0.5f);
+#pragma endregion
+
+#pragma region AIMovement
+
+#pragma endregion
 
 }
