@@ -50,33 +50,53 @@ void PrintDebugMessage(FColor color, FString TEXT(text))
 /// </summary>
 /// <param name="cam"></param>
 /// <param name="maxClickDistance"></param>
-void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDistance)
+void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDistance, FString tag, bool showDeveloperDebugs)
 {
-#pragma region Camera to world location
-	//Collect the front of the camera
-	FVector cameraFront = cam->GetForwardVector();
-	//The value of the mouse position
-	FVector2D mouse;
-	//Get the mouse position and store it in mouse
-	GEngine->GameViewport->GetMousePosition(mouse);
-	//Make a 3D vector that will be used as destination later
-	FVector destination(mouse.X, mouse.Y, maxClickDistance);
-	//This method translates the mouse position without this it's off by alot.
-	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(destination, cameraFront);
-	//This method seems to translate destination so from this point on destination seems to be accurate and can just be used below with 0 issues because it's been modified.
-	//We debug the line so we can see it
-	DrawDebugLine(GetWorld(), cameraFront, destination, FColor::Red, false, 1.0f, 0, 0.5f);
+#pragma region Camera to world direction
+	//A variable that will represent the origin of the player at present
+	FVector playerOrigin;
+	//The direction that player is in
+	FVector direction;
+	//This method finds the direction that the clicked point is in
+	//This method contains finding the mouse position and because of the way we have to handle it once we do this we were able to get ride of the line we had also finding mouse position it was redudant and overwriting Deproject
+	//My big misunderstanding is that I thought Deproject was fed a position and then returned a translated position that is in no way how this works this method just finds the direction of a ray cast like saying you clicked north but obviously more complex
+	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(playerOrigin, direction);
 #pragma endregion
+
+#pragma region DrawALineAndGetCollision
+
+	//A variable to store our hit results
+	FHitResult hit;
+	//We need to take our direction and find the farthest possible point we are allowed to click since unreal needs an end to this vector.
+	//This should be interupted when we cast into an object we are just saying if it's past this distance give up
+	direction = playerOrigin + direction * maxClickDistance;
+	//Unreal engine raycast and we are moving if we hit. Our trace starts at cameraFront because it's where our click starts from and ends at our modified direction both of these will create a ray
+	//If we hit an object with our acceptable tag we move if we do not then we do not move
+	if (GetWorld()->LineTraceSingleByChannel(hit, playerOrigin, direction,ECC_Visibility) && hit.GetActor()->Tags.Contains(tag))
+	{
 
 #pragma region AIMovement
 
-		//We need to use SimpleMoveToLocation in this example because we are not able to change controller from playercontroller to AIcontroller
-		//Even if we could we wouldn't want to SimpleMoveToLocation is built to use playercontroller and MoveToLocation that I tried to use before is built
-		//To use and AI controller exclusively.
+		//We need to use SimpleMoveToLocation in this example because we are not able to change controller from playercontroller to a custom AIcontroller
+		//Even if we could we wouldn't want to SimpleMoveToLocation is built to use playercontroller and MoveToLocation that I tried to use before is built to use and AIController exlusively.
+		//Though if we ever need to use playercontroller and simplemovetolocation it is possible to delete and recreate controllers at run time and then change the controller being possessed but there is absolutely no reason to do this here
 
-		//Important in the future for me to remember you can only have 1 active controller at a time. It's possible to effective delete a controller and make a new one at run time (I think)
-		//But we don't want to do that here because we have no extra code we are running where we need our own AI class for this I am just kind of making a foot note that is a much more complicated but possible option
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), destination);
+		//We move to the location of our hit this is the real position in world
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), hit.Location);
+
+#pragma endregion
+	}
+
+#pragma region DebugSettingsInMoveToPoint
+	//For debugging if we need developer debugs on
+	if (showDeveloperDebugs)
+	{
+		PrintDebugMessage(FColor::Orange, hit.Location.ToString());
+		//We debug the line so we can see it when testing
+		DrawDebugLine(GetWorld(), playerOrigin, hit.Location, FColor::Red, false, 1.0f, 0, 0.5f);
+	}
+#pragma endregion
+
 #pragma endregion
 
 }
