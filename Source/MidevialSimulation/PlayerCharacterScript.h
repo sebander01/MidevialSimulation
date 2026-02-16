@@ -33,11 +33,18 @@ public:
 
 #pragma region CamerMovement
 	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
-	//Allows the player to zoom in the camera
+	//Allows the player to zoom in the camera using the camera arm
 	void ZoomIn(USpringArmComponent* cameraArm, float zoomSpeed);
 
 	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
-	//Allows the player to zoom out the camera
+	//Allows the player to zoom out the camera using the camera arm
 	void ZoomOut(USpringArmComponent* cameraArm, float zoomSpeed);
+
+	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
+	void RotateAroundPlayer(USpringArmComponent* cameraArm, float rotationSpeed);
 #pragma endregion
+
+private:
+	//A temp variable for the last mouse position
+	FVector2D lastMousePosition;
 };
