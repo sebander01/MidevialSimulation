@@ -50,7 +50,7 @@ void PrintDebugMessage(FColor color, FString TEXT(text))
 /// </summary>
 /// <param name="cam"></param>
 /// <param name="maxClickDistance"></param>
-void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDistance, FString tag, bool showDeveloperDebugs)
+void APlayerCharacterScript::MoveToPoint(float maxClickDistance, FString tag, bool showDeveloperDebugs)
 {
 #pragma region Camera to world direction
 	//A variable that will represent the origin of the player at present
@@ -100,3 +100,29 @@ void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDi
 #pragma endregion
 
 }
+
+#pragma region CameraControls
+/// <summary>
+/// Using a spring arm change the arm length moving the camera forward
+/// Using a spring arm we automatically are factoring for whatever direction the camera is facing we do not have to care unreal handles it
+/// </summary>
+/// <param name="cam"></param>
+/// <param name="zoomSpeed"></param>
+void APlayerCharacterScript::ZoomIn(USpringArmComponent* camerArm, float zoomSpeed)
+{
+	//The target of arm length is changed to armlength + speed zooming in
+	camerArm->TargetArmLength = camerArm->TargetArmLength + zoomSpeed;
+}
+
+/// <summary>
+/// Using a spring arm change the arm lenght moving the camera backward
+/// Using a spring arm we automatically are factoring for whatever direction the camera is facing we do not have to care unreal handles it
+/// </summary>
+/// <param name="cam"></param>
+/// <param name="zoomSpeed"></param>
+void APlayerCharacterScript::ZoomOut(USpringArmComponent* cameraArm, float zoomSpeed)
+{
+	//The target of arm length is changed to armlength - speed zooming out
+	cameraArm->TargetArmLength = cameraArm->TargetArmLength - zoomSpeed;
+}
+#pragma endregion
