@@ -5,7 +5,6 @@
 #include "Camera/CameraComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
 // Sets default values
 APlayerCharacterScript::APlayerCharacterScript()
 {
@@ -44,13 +43,14 @@ void PrintDebugMessage(FColor color, FString TEXT(text))
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, color, TEXT(text));
 }
+#pragma region MoveToPoint
 
 /// <summary>
 /// A method to move the player to a point using nav mesh
 /// </summary>
 /// <param name="cam"></param>
 /// <param name="maxClickDistance"></param>
-void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDistance, FString tag, bool showDeveloperDebugs)
+void APlayerCharacterScript::MoveToPoint(float maxClickDistance, FString tag, bool showDeveloperDebugs)
 {
 #pragma region Camera to world direction
 	//A variable that will represent the origin of the player at present
@@ -100,3 +100,76 @@ void APlayerCharacterScript::MoveToPoint(UCameraComponent* cam, float maxClickDi
 #pragma endregion
 
 }
+
+#pragma endregion
+
+#pragma region CameraControls
+/// <summary>
+/// Using a spring arm change the arm length moving the camera forward
+/// Using a spring arm we automatically are factoring for whatever direction the camera is facing we do not have to care unreal handles it
+/// </summary>
+/// <param name="cam"></param>
+/// <param name="zoomSpeed"></param>
+void APlayerCharacterScript::ZoomIn(USpringArmComponent* camerArm, float zoomSpeed)
+{
+	//The target of arm length is changed to armlength + speed zooming in
+	camerArm->TargetArmLength = camerArm->TargetArmLength + zoomSpeed;
+}
+
+/// <summary>
+/// Using a spring arm change the arm lenght moving the camera backward
+/// Using a spring arm we automatically are factoring for whatever direction the camera is facing we do not have to care unreal handles it
+/// </summary>
+/// <param name="cam"></param>
+/// <param name="zoomSpeed"></param>
+void APlayerCharacterScript::ZoomOut(USpringArmComponent* cameraArm, float zoomSpeed)
+{
+	//The target of arm length is changed to armlength - speed zooming out
+	cameraArm->TargetArmLength = cameraArm->TargetArmLength - zoomSpeed;
+}
+
+/// <summary>
+/// This method allows the camera to move around the player based on the players mouse position.
+/// Note this assumes your current camera is currently attached to a spring arm connected to player based it's based on the position of the arm
+/// </summary>
+/// <param name="cameraArm"></param>
+/// <param name="rotationSpeed"></param>
+void APlayerCharacterScript::RotateAroundPlayer(USpringArmComponent* cameraArm, float rotationSpeed)
+{
+	//Vector for mouse position
+	FVector2D mouse;
+	//Get a 2D mouse position
+	GEngine->GameViewport->GetMousePosition(mouse);
+
+	//If the mouse position is higher then the last mouse position move up
+	if (mouse.Y > lastMousePosition.Y)
+	{
+		//Rotate with the relative position of the cameraArm this rotates around the connected player object
+		cameraArm->SetRelativeRotation(FRotator(cameraArm->GetRelativeRotation().Pitch + rotationSpeed, cameraArm->GetRelativeRotation().Yaw, cameraArm->GetRelativeRotation().Roll));
+		
+	}
+	//If the mouse position is lower then the last mouse position move down
+	else if (mouse.Y < lastMousePosition.Y)
+	{
+		//Rotate with the relative position of the cameraArm this rotates around the connected player object
+		cameraArm->SetRelativeRotation(FRotator(cameraArm->GetRelativeRotation().Pitch - rotationSpeed, cameraArm->GetRelativeRotation().Yaw, cameraArm->GetRelativeRotation().Roll));
+	}
+
+	//If the camera is more left then last position then move the camera left
+	if (mouse.X > lastMousePosition.X)
+	{
+		//Rotate with the relative position of the cameraArm this rotates around the connected player object
+		cameraArm->SetRelativeRotation(FRotator(cameraArm->GetRelativeRotation().Pitch, cameraArm->GetRelativeRotation().Yaw + rotationSpeed, cameraArm->GetRelativeRotation().Roll));
+	}
+	//If the camera is more right then  last position then move the camera right
+	else if (mouse.X < lastMousePosition.X)
+	{
+		//Rotate with the relative position of the cameraArm this rotates around the connected player object
+		cameraArm->SetRelativeRotation(FRotator(cameraArm->GetRelativeRotation().Pitch, cameraArm->GetRelativeRotation().Yaw - rotationSpeed, cameraArm->GetRelativeRotation().Roll));
+	}
+
+	//Store last mouse location
+	lastMousePosition = mouse;
+
+}
+#pragma endregion

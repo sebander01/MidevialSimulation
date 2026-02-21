@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "PlayerCharacterScript.generated.h"
 
 UCLASS()
@@ -28,5 +29,22 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerMovement")
 	//Allows the player to move to a point clicked on the ground by a players mouse
-	void MoveToPoint(UCameraComponent* cam, float maxClickDistance, FString tag, bool showDeveloperDebugs);
+	void MoveToPoint(float maxClickDistance, FString tag, bool showDeveloperDebugs);
+
+#pragma region CamerMovement
+	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
+	//Allows the player to zoom in the camera using the camera arm
+	void ZoomIn(USpringArmComponent* cameraArm, float zoomSpeed);
+
+	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
+	//Allows the player to zoom out the camera using the camera arm
+	void ZoomOut(USpringArmComponent* cameraArm, float zoomSpeed);
+
+	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
+	void RotateAroundPlayer(USpringArmComponent* cameraArm, float rotationSpeed);
+#pragma endregion
+
+private:
+	//A temp variable for the last mouse position
+	FVector2D lastMousePosition;
 };
