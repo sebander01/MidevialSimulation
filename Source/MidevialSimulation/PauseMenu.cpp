@@ -5,11 +5,16 @@
 void UPauseMenu::NativeConstruct() {
 	Super::NativeConstruct();
 
-	//ResumeButton->OnClicked.AddUniqueDynamic(this, &UPauseMenu::OpenMenu);
+	if (ResumeButton) {
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, TEXT("FOUND"));
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Green, TEXT("NOT FOUND"));
+	}
+
+	ResumeButton->OnClicked.AddDynamic(this, &UPauseMenu::OpenMenu);
 }
 
 void UPauseMenu::OpenMenu() {
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Menu Opened"));
-	}
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Green, TEXT("OPEN MENU"));
 }
