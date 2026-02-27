@@ -17,6 +17,7 @@ APlayerCharacterScript::APlayerCharacterScript()
 void APlayerCharacterScript::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
