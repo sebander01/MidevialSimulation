@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Components/Button.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "UIManager.generated.h"
 
 

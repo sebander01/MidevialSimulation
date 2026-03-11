@@ -12,7 +12,7 @@ void UUIManager::NativeConstruct() {
 }
 
 void UUIManager::OpenMenu() {
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Green, TEXT("OPEN MENU"));
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("OPEN MENU"));
 }
 
 
@@ -45,14 +45,14 @@ void UUISubsystem::OpenCloseAMenuWidget(TSubclassOf<UUserWidget> spawningWidget)
 	//If the widget exists
 	if (!OpenWidget)
 	{
+		APlayerController* PC = GetWorld()->GetFirstPlayerController();
 		//Create a user widget and save it to OpenWidget
-		OpenWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), spawningWidget);
+		OpenWidget = CreateWidget<UUserWidget>(PC, spawningWidget);
 		//Add user widget to view port
 		OpenWidget->AddToViewport();
 		//Change game mode and set input gamemode ui focus
-		FInputModeGameAndUI input;
-		input.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(input);
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PC, OpenWidget, EMouseLockMode::DoNotLock);
+		OpenWidget->SetUserFocus(PC);
 	}
 	else
 	{
