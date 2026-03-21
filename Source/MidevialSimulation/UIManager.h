@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION(BlueprintCallable)
 	void OpenMenu();
 
 	UPROPERTY(meta = (BindWidget))
