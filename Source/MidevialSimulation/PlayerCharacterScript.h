@@ -47,4 +47,5 @@ public:
 private:
 	//A temp variable for the last mouse position
 	FVector2D lastMousePosition;
+	UGameInstanceSubsystem* playerDetails;
 };

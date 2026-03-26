@@ -19,7 +19,6 @@ void UUIManager::OpenMenu() {
 
 
 #pragma region UISubsystem
-//https://tech.flying-rat.studio/ue-subsystems-x3n8v5q2?utm_source=chatgpt.com#subsystems-lifetime-overview is a useful resource in learning this
 UUISubsystem::UUISubsystem()
 {
 	//Constructor for any internal data
